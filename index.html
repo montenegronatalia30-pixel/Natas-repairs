@@ -73,6 +73,30 @@
     }
     .section-heading { font-size: clamp(1.9rem, 4vw, 2.8rem); color: var(--navy); margin-bottom: 16px; }
     .section-sub { font-size: 1.05rem; color: var(--gray); max-width: 560px; line-height: 1.7; }
+          
+ .brands {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.brands-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.brands-container img {
+  width: 90px;
+  opacity: 0.8;
+  transition: 0.3s;
+}
+
+.brands-container img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
 
     /* ── Noise overlay ──────────────────────────── */
     body::before {
@@ -750,32 +774,7 @@
     <img src="logos/acer.png" alt="Acer">
   </div>
 </section>
-      
-.brands {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.brands-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 25px;
-  margin-top: 20px;
-}
-
-.brands-container img {
-  width: 90px;
-  opacity: 0.8;
-  transition: 0.3s;
-}
-
-.brands-container img:hover {
-  opacity: 1;
-  transform: scale(1.1);
-}
-      
-
+     
       <div class="prod-cards" data-aos="fade-left" data-aos-delay="150">
         <div class="prod-item">
           <div class="pi-icon"><i class="fas fa-memory"></i></div>
