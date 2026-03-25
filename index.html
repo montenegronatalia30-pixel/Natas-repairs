@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NATA's Repairs — Ingeniería de Soluciones</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+
+  <style>
+    /* ── Variables ─────────────────────────────── */
+    :root {
+      --navy:    #0A1628;
+      --blue:    #0F3460;
+      --mid:     #1A5276;
+      --accent:  #00C6FF;
+      --accent2: #0072FF;
+      --white:   #FFFFFF;
+      --off:     #F4F7FB;
+      --gray:    #8A9BB5;
+      --text:    #1C2B40;
+      --card-bg: #FFFFFF;
+      --radius:  16px;
+      --shadow:  0 8px 40px rgba(10,22,40,.10);
+      --shadow-hover: 0 16px 56px rgba(10,22,40,.18);
+    }
+
+    /* ── Reset / Base ───────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.65;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Typography ─────────────────────────────── */
+    h1,h2,h3,h4,h5 { font-family: 'Syne', sans-serif; font-weight: 700; line-height: 1.15; }
+
+    /* ── Utilities ──────────────────────────────── */
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+    .accent-text { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 32px; border-radius: 50px; font-family: 'Syne', sans-serif;
+      font-weight: 600; font-size: .95rem; cursor: pointer; border: none;
+      transition: all .3s cubic-bezier(.4,0,.2,1);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: #fff; box-shadow: 0 4px 24px rgba(0,114,255,.35);
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,114,255,.5); }
+    .btn-outline {
+      background: transparent; color: #fff;
+      border: 2px solid rgba(255,255,255,.5);
+    }
+    .btn-outline:hover { background: rgba(255,255,255,.12); border-color: #fff; transform: translateY(-3px); }
+    .section-tag {
+      display: inline-block; font-family: 'Syne', sans-serif; font-size: .75rem;
+      font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--accent2); background: rgba(0,114,255,.08);
+      border: 1px solid rgba(0,114,255,.2); padding: 6px 16px; border-radius: 50px;
+      margin-bottom: 20px;
+    }
+    .section-heading { font-size: clamp(1.9rem, 4vw, 2.8rem); color: var(--navy); margin-bottom: 16px; }
+    .section-sub { font-size: 1.05rem; color: var(--gray); max-width: 560px; line-height: 1.7; }
+
+    /* ── Noise overlay ──────────────────────────── */
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: .35;
+    }
+
+    /* ────────────────────────────────────────────── *
+     * NAV                                            *
+     * ────────────────────────────────────────────── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      padding: 20px 0; transition: all .4s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(10,22,40,.92); backdrop-filter: blur(18px);
+      padding: 14px 0; box-shadow: 0 2px 40px rgba(0,0,0,.3);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+
+    .logo { display: flex; align-items: center; gap: 14px; }
+    .logo-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; color: #fff; box-shadow: 0 4px 18px rgba(0,114,255,.4);
+    }
+    .logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.15rem; color: #fff; }
+    .logo-text span { color: var(--accent); }
+
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-links a {
+      color: rgba(255,255,255,.8); font-size: .9rem; font-weight: 500;
+      padding: 8px 16px; border-radius: 8px;
+      transition: all .25s; font-family: 'Syne', sans-serif;
+    }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,.1); }
+    .nav-cta { margin-left: 12px; }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; }
+    .hamburger span { width: 26px; height: 2px; background: #fff; border-radius: 2px; transition: all .3s; }
+
+    /* Mobile menu */
+    .mobile-menu {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--navy); z-index: 850; flex-direction: column;
+      align-items: center; justify-content: center; gap: 28px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: #fff; font-family: 'Syne', sans-serif; font-size: 1.5rem;
+      font-weight: 700; opacity: 0; animation: fadeUp .4s ease forwards;
+    }
+    .mobile-menu a:nth-child(1){ animation-delay:.1s}
+    .mobile-menu a:nth-child(2){ animation-delay:.18s}
+    .mobile-menu a:nth-child(3){ animation-delay:.26s}
+    .mobile-menu a:nth-child(4){ animation-delay:.34s}
+    .mobile-menu a:nth-child(5){ animation-delay:.42s}
+    .mobile-menu a:nth-child(6){ animation-delay:.5s}
+    .close-menu {
+      position: absolute; top: 24px; right: 28px;
+      background: none; border: none; color: #fff; font-size: 1.8rem; cursor: pointer;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ────────────────────────────────────────────── *
+     * HERO                                           *
+     * ────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh; position: relative; overflow: hidden;
+      display: flex; align-items: center;
+      background: linear-gradient(145deg, var(--navy) 0%, var(--blue) 55%, #0D3B80 100%);
+    }
+
+    /* Geometric bg shapes */
+    .hero-bg { position: absolute; inset: 0; pointer-events: none; }
+    .hero-bg .circle1 {
+      position: absolute; width: 700px; height: 700px;
+      border-radius: 50%; top: -200px; right: -150px;
+      background: radial-gradient(circle, rgba(0,198,255,.14) 0%, transparent 70%);
+    }
+    .hero-bg .circle2 {
+      position: absolute; width: 500px; height: 500px; border-radius: 50%;
+      bottom: -100px; left: -100px;
+      background: radial-gradient(circle, rgba(0,114,255,.12) 0%, transparent 70%);
+    }
+    .hero-bg .grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    /* Animated floating dots */
+    .dot { position: absolute; border-radius: 50%; animation: float 6s ease-in-out infinite; }
+    .dot1 { width:8px;height:8px;background:var(--accent);top:20%;left:15%;animation-delay:0s;opacity:.7; }
+    .dot2 { width:5px;height:5px;background:var(--accent2);top:60%;left:70%;animation-delay:2s;opacity:.5; }
+    .dot3 { width:10px;height:10px;background:rgba(0,198,255,.4);top:80%;left:25%;animation-delay:4s; }
+    .dot4 { width:6px;height:6px;background:rgba(255,255,255,.4);top:40%;left:85%;animation-delay:1s; }
+    @keyframes float {
+      0%,100%{transform:translateY(0) scale(1);}
+      50%{transform:translateY(-22px) scale(1.1);}
+    }
+
+    .hero-content { position: relative; z-index: 2; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,198,255,.12); border: 1px solid rgba(0,198,255,.3);
+      color: var(--accent); font-size: .8rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase; font-family: 'Syne', sans-serif;
+      padding: 8px 18px; border-radius: 50px; margin-bottom: 28px;
+    }
+    .hero-badge i { font-size: .75rem; }
+    .hero-title {
+      font-size: clamp(2.6rem, 7vw, 5.2rem); color: #fff;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      margin-bottom: 24px; letter-spacing: -.02em;
+    }
+    .hero-title .line2 { display: block; }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem); color: rgba(255,255,255,.65);
+      max-width: 540px; margin-bottom: 44px; line-height: 1.75;
+    }
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-stats {
+      display: flex; gap: 44px; margin-top: 72px; flex-wrap: wrap;
+    }
+    .stat { }
+    .stat-number {
+      font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800;
+      color: #fff; line-height: 1;
+    }
+    .stat-label { color: rgba(255,255,255,.5); font-size: .85rem; margin-top: 4px; }
+    .stat-divider { width: 1px; background: rgba(255,255,255,.15); }
+
+    /* Floating card in hero */
+    .hero-card-float {
+      position: absolute; right: 6%; top: 50%; transform: translateY(-50%);
+      z-index: 2;
+    }
+    .hero-card {
+      background: rgba(255,255,255,.07); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,.14); border-radius: 24px;
+      padding: 32px 28px; width: 280px;
+      animation: cardFloat 4s ease-in-out infinite;
+    }
+    @keyframes cardFloat {
+      0%,100%{transform:translateY(0);}
+      50%{transform:translateY(-14px);}
+    }
+    .hc-icon {
+      width: 52px; height: 52px; background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: #fff; margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0,114,255,.4);
+    }
+    .hc-title { font-family: 'Syne', sans-serif; font-weight: 700; color: #fff; font-size: 1.05rem; margin-bottom: 8px; }
+    .hc-sub { color: rgba(255,255,255,.55); font-size: .85rem; line-height: 1.5; }
+    .hc-pill {
+      margin-top: 20px; display: inline-block;
+      background: rgba(0,198,255,.18); color: var(--accent);
+      border-radius: 50px; padding: 6px 14px; font-size: .78rem;
+      font-family: 'Syne', sans-serif; font-weight: 600;
+    }
+
+    /* ────────────────────────────────────────────── *
+     * SERVICES                                       *
+     * ────────────────────────────────────────────── */
+    #services { padding: 120px 0; background: var(--off); }
+    .services-head { text-align: center; margin-bottom: 70px; }
+    .services-head .section-sub { margin: 0 auto; }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+    }
+    .service-card {
+      background: var(--card-bg); border-radius: var(--radius);
+      padding: 36px 32px; box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,.05);
+      transition: all .35s cubic-bezier(.4,0,.2,1);
+      position: relative; overflow: hidden;
+    }
+    .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      opacity: 0; transition: opacity .35s;
+    }
+    .service-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-hover); }
+    .service-card:hover::before { opacity: 1; }
+
+    .sc-icon {
+      width: 60px; height: 60px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 22px;
+      background: linear-gradient(135deg, rgba(0,114,255,.1), rgba(0,198,255,.08));
+      color: var(--accent2); transition: all .35s;
+    }
+    .service-card:hover .sc-icon {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: #fff; box-shadow: 0 8px 24px rgba(0,114,255,.35);
+    }
+    .sc-name { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+    .sc-desc { font-size: .9rem; color: var(--gray); line-height: 1.65; margin-bottom: 24px; }
+    .sc-price {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 1.4rem; color: var(--navy);
+    }
+    .sc-currency { font-size: .85rem; color: var(--gray); font-weight: 500; align-self: flex-start; padding-top: 4px; }
+
+    /* ────────────────────────────────────────────── *
+     * PRODUCTS / ENCARGO                             *
+     * ────────────────────────────────────────────── */
+    #products {
+      padding: 120px 0;
+      background: linear-gradient(160deg, var(--navy) 0%, var(--blue) 100%);
+      position: relative; overflow: hidden;
+    }
+    #products::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .products-inner { position: relative; z-index: 1; }
+    .products-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+
+    .prod-text .section-tag { background: rgba(0,198,255,.12); border-color: rgba(0,198,255,.25); }
+    .prod-text .section-heading { color: #fff; }
+    .prod-text .section-sub { color: rgba(255,255,255,.6); }
+
+    .prod-note {
+      margin-top: 28px; padding: 20px 24px;
+      background: rgba(0,198,255,.1); border: 1px solid rgba(0,198,255,.25);
+      border-radius: 12px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .prod-note i { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
+    .prod-note p { color: rgba(255,255,255,.7); font-size: .9rem; line-height: 1.6; }
+
+    .prod-cards { display: flex; flex-direction: column; gap: 16px; }
+    .prod-item {
+      background: rgba(255,255,255,.07); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.12); border-radius: 14px;
+      padding: 22px 24px; display: flex; align-items: center; gap: 18px;
+      transition: all .3s;
+    }
+    .prod-item:hover {
+      background: rgba(255,255,255,.11);
+      border-color: rgba(0,198,255,.35); transform: translateX(8px);
+    }
+    .pi-icon {
+      width: 46px; height: 46px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #fff;
+    }
+    .pi-name { font-family: 'Syne', sans-serif; font-weight: 600; color: #fff; font-size: .95rem; }
+    .pi-sub { color: rgba(255,255,255,.45); font-size: .82rem; margin-top: 3px; }
+    .pi-badge {
+      margin-left: auto; flex-shrink: 0;
+      background: rgba(0,198,255,.15); color: var(--accent);
+      border: 1px solid rgba(0,198,255,.3); border-radius: 50px;
+      padding: 5px 12px; font-size: .75rem; font-family: 'Syne', sans-serif; font-weight: 600;
+    }
+
+    /* ────────────────────────────────────────────── *
+     * ABOUT                                          *
+     * ────────────────────────────────────────────── */
+    #about { padding: 120px 0; background: var(--white); }
+    .about-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+
+    .about-visual { position: relative; }
+    .about-img-wrap {
+      border-radius: 24px; overflow: hidden;
+      background: linear-gradient(145deg, var(--blue) 0%, var(--navy) 100%);
+      aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .about-img-inner {
+      text-align: center; padding: 40px;
+    }
+    .about-logo-big {
+      width: 80px; height: 80px; border-radius: 22px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: #fff; margin: 0 auto 20px;
+      box-shadow: 0 12px 40px rgba(0,114,255,.4);
+    }
+    .about-img-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: #fff; }
+    .about-img-sub { color: rgba(255,255,255,.55); font-size: .9rem; margin-top: 6px; }
+
+    /* floating badges */
+    .float-badge {
+      position: absolute; background: #fff; border-radius: 14px;
+      padding: 14px 18px; box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      display: flex; align-items: center; gap: 12px;
+      animation: cardFloat 4s ease-in-out infinite;
+    }
+    .fb1 { bottom: -24px; left: -24px; animation-delay: 0s; }
+    .fb2 { top: -20px; right: -20px; animation-delay: 2s; }
+    .fb-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: .9rem; }
+    .fb-icon.green { background: rgba(16,185,129,.15); color: #10B981; }
+    .fb-icon.blue  { background: rgba(0,114,255,.12); color: var(--accent2); }
+    .fb-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--navy); }
+    .fb-lbl { font-size: .75rem; color: var(--gray); }
+
+    .about-features { display: flex; flex-direction: column; gap: 22px; margin-top: 36px; }
+    .af-item { display: flex; gap: 16px; align-items: flex-start; }
+    .af-icon {
+      width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+      background: rgba(0,114,255,.08); color: var(--accent2);
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+      transition: all .3s;
+    }
+    .af-item:hover .af-icon {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: #fff;
+    }
+    .af-title { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .af-desc { font-size: .9rem; color: var(--gray); line-height: 1.6; }
+
+    /* ────────────────────────────────────────────── *
+     * SOCIAL                                         *
+     * ────────────────────────────────────────────── */
+    #social { padding: 100px 0; background: var(--off); }
+    .social-head { text-align: center; margin-bottom: 60px; }
+    .social-head .section-sub { margin: 0 auto; }
+
+    .social-cards { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; }
+    .soc-card {
+      border-radius: var(--radius); padding: 44px 44px;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      transition: all .35s; cursor: pointer; flex: 1; min-width: 240px; max-width: 300px;
+      text-decoration: none;
+    }
+    .soc-card.tiktok {
+      background: linear-gradient(145deg, #010101 0%, #1a1a2e 100%);
+      box-shadow: 0 8px 40px rgba(0,0,0,.25);
+    }
+    .soc-card.whatsapp {
+      background: linear-gradient(145deg, #075E54 0%, #128C7E 100%);
+      box-shadow: 0 8px 40px rgba(18,140,126,.25);
+    }
+    .soc-card:hover { transform: translateY(-12px); }
+    .soc-card.tiktok:hover { box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+    .soc-card.whatsapp:hover { box-shadow: 0 20px 60px rgba(18,140,126,.4); }
+    .soc-icon { font-size: 2.8rem; margin-bottom: 20px; }
+    .soc-card.tiktok .soc-icon { color: #fff; }
+    .soc-card.whatsapp .soc-icon { color: #25D366; }
+    .soc-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem; color: #fff; margin-bottom: 8px; }
+    .soc-handle { color: rgba(255,255,255,.55); font-size: .88rem; margin-bottom: 24px; }
+    .soc-btn {
+      padding: 10px 24px; border-radius: 50px; font-family: 'Syne', sans-serif;
+      font-weight: 600; font-size: .85rem; transition: all .3s;
+    }
+    .soc-card.tiktok .soc-btn {
+      background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25);
+    }
+    .soc-card.tiktok:hover .soc-btn { background: rgba(255,255,255,.22); }
+    .soc-card.whatsapp .soc-btn {
+      background: #25D366; color: #fff; border: none;
+      box-shadow: 0 4px 16px rgba(37,211,102,.4);
+    }
+    .soc-card.whatsapp:hover .soc-btn { background: #1ebe5d; }
+
+    /* ────────────────────────────────────────────── *
+     * CTA STRIP                                      *
+     * ────────────────────────────────────────────── */
+    #cta {
+      padding: 100px 0;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      position: relative; overflow: hidden;
+    }
+    #cta::before {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(ellipse at 60% 50%, rgba(0,198,255,.12) 0%, transparent 60%);
+    }
+    .cta-inner { position: relative; z-index: 1; text-align: center; }
+    .cta-inner h2 { font-size: clamp(2rem,4vw,3rem); color: #fff; margin-bottom: 16px; }
+    .cta-inner p { color: rgba(255,255,255,.6); font-size: 1.1rem; margin-bottom: 40px; }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ────────────────────────────────────────────── *
+     * FOOTER                                         *
+     * ────────────────────────────────────────────── */
+    footer { background: var(--navy); padding: 70px 0 32px; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 56px; padding-bottom: 56px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .footer-brand .logo-text { margin-bottom: 16px; display: block; font-size: 1.2rem; }
+    .footer-brand p { color: rgba(255,255,255,.45); font-size: .9rem; line-height: 1.7; max-width: 300px; }
+    .footer-contact { margin-top: 24px; }
+    .fc-item { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+    .fc-item i { color: var(--accent); font-size: .9rem; width: 18px; }
+    .fc-item span { color: rgba(255,255,255,.55); font-size: .88rem; }
+
+    .footer-col h4 {
+      font-family: 'Syne', sans-serif; font-weight: 700; color: #fff;
+      font-size: .95rem; margin-bottom: 20px; letter-spacing: .05em;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a {
+      color: rgba(255,255,255,.45); font-size: .88rem;
+      transition: color .25s; display: flex; align-items: center; gap: 8px;
+    }
+    .footer-col ul li a:hover { color: var(--accent); }
+    .footer-col ul li a i { font-size: .7rem; }
+
+    .footer-bottom {
+      padding-top: 28px; display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { color: rgba(255,255,255,.25); font-size: .82rem; }
+    .footer-socials { display: flex; gap: 12px; }
+    .footer-socials a {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,.5); font-size: .9rem; transition: all .3s;
+    }
+    .footer-socials a:hover { background: var(--accent2); color: #fff; border-color: transparent; }
+
+    /* ────────────────────────────────────────────── *
+     * WHATSAPP FLOAT                                 *
+     * ────────────────────────────────────────────── */
+    .wa-float {
+      position: fixed; bottom: 32px; right: 32px; z-index: 800;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: #25D366; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.7rem; box-shadow: 0 6px 28px rgba(37,211,102,.5);
+      transition: all .3s; cursor: pointer;
+      animation: waPulse 2.5s ease-in-out infinite;
+    }
+    .wa-float:hover { transform: scale(1.12); box-shadow: 0 10px 36px rgba(37,211,102,.7); }
+    @keyframes waPulse {
+      0%,100%{ box-shadow: 0 6px 28px rgba(37,211,102,.5), 0 0 0 0 rgba(37,211,102,.35); }
+      50%{ box-shadow: 0 6px 28px rgba(37,211,102,.5), 0 0 0 14px rgba(37,211,102,0); }
+    }
+
+    /* ────────────────────────────────────────────── *
+     * SCROLL PROGRESS BAR                            *
+     * ────────────────────────────────────────────── */
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; z-index: 1000;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      width: 0%; transition: width .1s linear;
+    }
+
+    /* ────────────────────────────────────────────── *
+     * RESPONSIVE                                     *
+     * ────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-card-float { display: none; }
+      .products-layout { grid-template-columns: 1fr; gap: 50px; }
+      .about-layout { grid-template-columns: 1fr; gap: 50px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .hero-stats { gap: 28px; }
+      .stat-divider { display: none; }
+      .services-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      #services, #products, #about, #social, #cta { padding: 80px 0; }
+    }
+    @media (max-width: 480px) {
+      .hero-buttons { flex-direction: column; }
+      .btn { justify-content: center; }
+      .social-cards { flex-direction: column; align-items: stretch; }
+      .soc-card { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div id="progress"></div>
+
+<!-- WhatsApp Float -->
+<a href="https://wa.me/573227107535" target="_blank" class="wa-float" aria-label="Contactar por WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- ── MOBILE MENU ──────────────────────────── -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close-menu" id="closeMenu"><i class="fas fa-times"></i></button>
+  <a href="#hero"     onclick="closeNav()">Inicio</a>
+  <a href="#services" onclick="closeNav()">Servicios</a>
+  <a href="#products" onclick="closeNav()">Productos</a>
+  <a href="#about"    onclick="closeNav()">Nosotros</a>
+  <a href="#social"   onclick="closeNav()">Redes</a>
+  <a href="https://wa.me/573227107535" target="_blank">Contacto</a>
+</div>
+
+<!-- ── NAVBAR ──────────────────────────────── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="logo">
+        <div class="logo-icon"><i class="fas fa-microchip"></i></div>
+        <span class="logo-text">NATA's <span>Repairs</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="#services">Servicios</a>
+        <a href="#products">Productos</a>
+        <a href="#about">Nosotros</a>
+        <a href="#social">Redes</a>
+      </div>
+      <a href="https://wa.me/573227107535" target="_blank" class="btn btn-primary nav-cta">
+        <i class="fab fa-whatsapp"></i> Contactar
+      </a>
+      <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-bg">
+    <div class="circle1"></div>
+    <div class="circle2"></div>
+    <div class="grid"></div>
+    <div class="dot dot1"></div>
+    <div class="dot dot2"></div>
+    <div class="dot dot3"></div>
+    <div class="dot dot4"></div>
+  </div>
+
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge" data-aos="fade-down" data-aos-duration="600">
+        <i class="fas fa-circle-check"></i> Servicio Técnico Profesional
+      </div>
+      <h1 class="hero-title" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">
+        Ingeniería de<br>
+        <span class="line2 accent-text">Soluciones</span>
+      </h1>
+      <p class="hero-sub" data-aos="fade-up" data-aos-duration="700" data-aos-delay="200">
+        Diagnóstico, reparación y mantenimiento de equipos de cómputo con la precisión que tu tecnología merece. Resultados garantizados.
+      </p>
+      <div class="hero-buttons" data-aos="fade-up" data-aos-duration="700" data-aos-delay="300">
+        <a href="#services" class="btn btn-primary">
+          <i class="fas fa-tools"></i> Ver Servicios
+        </a>
+        <a href="https://wa.me/573227107535" target="_blank" class="btn btn-outline">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+      </div>
+      <div class="hero-stats" data-aos="fade-up" data-aos-duration="700" data-aos-delay="450">
+        <div class="stat">
+          <div class="stat-number">+500</div>
+          <div class="stat-label">Equipos reparados</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Diagnóstico garantizado</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-number">24h</div>
+          <div class="stat-label">Respuesta rápida</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating info card -->
+  <div class="hero-card-float" data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
+    <div class="hero-card">
+      <div class="hc-icon"><i class="fas fa-laptop-medical"></i></div>
+      <div class="hc-title">Diagnóstico Rápido</div>
+      <div class="hc-sub">Identificamos el problema de tu equipo con precisión técnica y te entregamos solución.</div>
+      <span class="hc-pill"><i class="fas fa-bolt"></i> Desde $35.000</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ─────────────────────────────── -->
+<section id="services">
+  <div class="container">
+    <div class="services-head" data-aos="fade-up">
+      <span class="section-tag"><i class="fas fa-wrench"></i> Lo que hacemos</span>
+      <h2 class="section-heading">Servicios Técnicos Especializados</h2>
+      <p class="section-sub">Cada reparación es tratada con dedicación y conocimiento técnico de nivel profesional.</p>
+    </div>
+
+    <div class="services-grid">
+      <!-- Card 1 -->
+      <div class="service-card" data-aos="fade-up" data-aos-delay="0">
+        <div class="sc-icon"><i class="fas fa-microscope"></i></div>
+        <div class="sc-name">Diagnóstico en Laboratorio</div>
+        <div class="sc-desc">Análisis completo de hardware y software en nuestra instalación equipada con herramientas especializadas.</div>
+        <div class="sc-price"><span class="sc-currency">COP</span> $35.000</div>
+      </div>
+      <!-- Card 2 -->
+      <div class="service-card" data-aos="fade-up" data-aos-delay="80">
+        <div class="sc-icon"><i class="fas fa-location-dot"></i></div>
+        <div class="sc-name">Diagnóstico en Sitio</div>
+        <div class="sc-desc">Desplazamiento a tu ubicación para diagnóstico técnico inmediato sin necesidad de trasladar el equipo.</div>
+        <div class="sc-price"><span class="sc-currency">COP</span> $60.000</div>
+      </div>
+      <!-- Card 3 -->
+      <div class="service-card" data-aos="fade-up" data-aos-delay="160">
+        <div class="sc-icon"><i class="fab fa-microsoft"></i></div>
+        <div class="sc-name">Instalación Office</div>
+        <div class="sc-desc">Paquete completo de herramientas Microsoft Office instalado y configurado correctamente en tu equipo.</div>
+        <div class="sc-price"><span class="sc-currency">COP</span> $80.000</div>
+      </div>
+      <!-- Card 4 -->
+      <div class="service-card" data-aos="fade-up" data-aos-delay="240">
+        <div class="sc-icon"><i class="fab fa-windows"></i></div>
+        <div class="sc-name">Formateo / Sistema Operativo</div>
+        <div class="sc-desc">Formateo completo o instalación de sistema operativo con configuración óptima para máximo rendimiento.</div>
+        <div class="sc-price"><span class="sc-currency">COP</span> $70.000</div>
+      </div>
+      <!-- Card 5 -->
+      <div class="service-card" data-aos="fade-up" data-aos-delay="320">
+        <div class="sc-icon"><i class="fas fa-memory"></i></div>
+        <div class="sc-name">Instalación de Partes</div>
+        <div class="sc-desc">Instalación técnica de cada componente: RAM, disco duro, tarjeta de video, ventiladores y más.</div>
+        <div class="sc-price"><span class="sc-currency">COP</span> $50.000 <small style="font-size:.7rem;color:var(--gray);font-family:'DM Sans';font-weight:400;">/ c/u</small></div>
+      </div>
+      <!-- Card 6 -->
+      <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+        <div class="sc-icon"><i class="fas fa-wind"></i></div>
+        <div class="sc-name">Limpieza General</div>
+        <div class="sc-desc">Limpieza profunda interna y externa del equipo: eliminación de polvo, pasta térmica y revisión de cables.</div>
+        <div class="sc-price"><span class="sc-currency">COP</span> $90.000</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRODUCTS ─────────────────────────────── -->
+<section id="products">
+  <div class="container products-inner">
+    <div class="products-layout">
+      <div class="prod-text" data-aos="fade-right">
+        <span class="section-tag"><i class="fas fa-box"></i> Componentes</span>
+        <h2 class="section-heading">Venta de Partes por Encargo</h2>
+        <p class="section-sub">Conseguimos los componentes que tu equipo necesita con total transparencia y al mejor precio del mercado.</p>
+        <div class="prod-note">
+          <i class="fas fa-circle-info"></i>
+          <p><strong style="color:rgba(255,255,255,.85)">Importante:</strong> Las partes de computador se venden únicamente por encargo y están sujetas a disponibilidad en el mercado. Contáctanos y buscamos lo que necesitas.</p>
+        </div>
+        <div style="margin-top:32px">
+          <a href="https://wa.me/573227107535?text=Hola,%20quiero%20consultar%20disponibilidad%20de%20partes" target="_blank" class="btn btn-primary">
+            <i class="fab fa-whatsapp"></i> Consultar Disponibilidad
+          </a>
+        </div>
+      </div>
+
+      <div class="prod-cards" data-aos="fade-left" data-aos-delay="150">
+        <div class="prod-item">
+          <div class="pi-icon"><i class="fas fa-memory"></i></div>
+          <div>
+            <div class="pi-name">Memorias RAM</div>
+            <div class="pi-sub">DDR4 / DDR5 — distintas capacidades</div>
+          </div>
+          <span class="pi-badge">Por encargo</span>
+        </div>
+        <div class="prod-item">
+          <div class="pi-icon"><i class="fas fa-hard-drive"></i></div>
+          <div>
+            <div class="pi-name">Discos y SSD</div>
+            <div class="pi-sub">HDD, SSD SATA y NVMe M.2</div>
+          </div>
+          <span class="pi-badge">Por encargo</span>
+        </div>
+        <div class="prod-item">
+          <div class="pi-icon"><i class="fas fa-fan"></i></div>
+          <div>
+            <div class="pi-name">Ventiladores / Coolers</div>
+            <div class="pi-sub">Refrigeración para CPU y carcasa</div>
+          </div>
+          <span class="pi-badge">Por encargo</span>
+        </div>
+        <div class="prod-item">
+          <div class="pi-icon"><i class="fas fa-bolt"></i></div>
+          <div>
+            <div class="pi-name">Fuentes de Poder</div>
+            <div class="pi-sub">Desde 450W hasta 850W certificadas</div>
+          </div>
+          <span class="pi-badge">Por encargo</span>
+        </div>
+        <div class="prod-item">
+          <div class="pi-icon"><i class="fas fa-display"></i></div>
+          <div>
+            <div class="pi-name">Tarjetas de Video</div>
+            <div class="pi-sub">GPU dedicadas según presupuesto</div>
+          </div>
+          <span class="pi-badge">Por encargo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ────────────────────────────────── -->
+<section id="about">
+  <div class="container">
+    <div class="about-layout">
+      <div class="about-visual" data-aos="fade-right">
+        <div class="about-img-wrap">
+          <div class="about-img-inner">
+            <div class="about-logo-big"><i class="fas fa-microchip"></i></div>
+            <div class="about-img-title">NATA's Repairs</div>
+            <div class="about-img-sub">Ingeniería de Soluciones</div>
+          </div>
+        </div>
+        <div class="float-badge fb1">
+          <div class="fb-icon green"><i class="fas fa-shield-check"></i></div>
+          <div>
+            <div class="fb-num">100%</div>
+            <div class="fb-lbl">Garantía de servicio</div>
+          </div>
+        </div>
+        <div class="float-badge fb2">
+          <div class="fb-icon blue"><i class="fas fa-star"></i></div>
+          <div>
+            <div class="fb-num">5★</div>
+            <div class="fb-lbl">Clientes satisfechos</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-text" data-aos="fade-left" data-aos-delay="150">
+        <span class="section-tag"><i class="fas fa-building"></i> Quiénes somos</span>
+        <h2 class="section-heading">Experiencia técnica que genera confianza</h2>
+        <p class="section-sub">En NATA's Repairs combinamos conocimiento técnico profundo con un servicio honesto y transparente. Tu equipo está en buenas manos.</p>
+
+        <div class="about-features">
+          <div class="af-item">
+            <div class="af-icon"><i class="fas fa-user-gear"></i></div>
+            <div>
+              <div class="af-title">Técnicos Especializados</div>
+              <div class="af-desc">Contamos con técnicos capacitados en hardware, software y sistemas operativos modernos.</div>
+            </div>
+          </div>
+          <div class="af-item">
+            <div class="af-icon"><i class="fas fa-clock-rotate-left"></i></div>
+            <div>
+              <div class="af-title">Entregas a Tiempo</div>
+              <div class="af-desc">Valoramos tu tiempo. Cumplimos con los plazos acordados y te mantenemos informado en todo momento.</div>
+            </div>
+          </div>
+          <div class="af-item">
+            <div class="af-icon"><i class="fas fa-handshake"></i></div>
+            <div>
+              <div class="af-title">Presupuesto Transparente</div>
+              <div class="af-desc">Antes de cualquier intervención, te explicamos exactamente qué se hará y cuánto costará.</div>
+            </div>
+          </div>
+          <div class="af-item">
+            <div class="af-icon"><i class="fas fa-shield-halved"></i></div>
+            <div>
+              <div class="af-title">Garantía en Trabajos</div>
+              <div class="af-desc">Respaldamos nuestra labor. Si el problema persiste tras el servicio, lo resolvemos sin costo adicional.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SOCIAL ───────────────────────────────── -->
+<section id="social">
+  <div class="container">
+    <div class="social-head" data-aos="fade-up">
+      <span class="section-tag"><i class="fas fa-share-nodes"></i> Síguenos</span>
+      <h2 class="section-heading">Conéctate con Nosotros</h2>
+      <p class="section-sub">Mantente al día con nuestros consejos técnicos, novedades y ofertas en nuestras redes sociales.</p>
+    </div>
+    <div class="social-cards">
+      <a href="https://www.tiktok.com/@natas.repairs?_r=1&_t=ZS-94yYq2u4EBG" target="_blank" class="soc-card tiktok" data-aos="fade-up" data-aos-delay="0">
+        <div class="soc-icon"><i class="fab fa-tiktok"></i></div>
+        <div class="soc-name">TikTok</div>
+        <div class="soc-handle">@natas.repairs</div>
+        <span class="soc-btn">Seguir en TikTok</span>
+      </a>
+      <a href="https://wa.me/573227107535" target="_blank" class="soc-card whatsapp" data-aos="fade-up" data-aos-delay="120">
+        <div class="soc-icon"><i class="fab fa-whatsapp"></i></div>
+        <div class="soc-name">WhatsApp</div>
+        <div class="soc-handle">+57 322 710 7535</div>
+        <span class="soc-btn">Iniciar Chat</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ──────────────────────────────────── -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-inner" data-aos="zoom-in">
+      <h2>¿Tu equipo necesita atención?</h2>
+      <p>Escríbenos ahora y recibe asesoría técnica gratuita al instante.</p>
+      <div class="cta-buttons">
+        <a href="https://wa.me/573227107535?text=Hola,%20necesito%20asistencia%20técnica" target="_blank" class="btn btn-primary">
+          <i class="fab fa-whatsapp"></i> Escribir por WhatsApp
+        </a>
+        <a href="#services" class="btn btn-outline">
+          <i class="fas fa-list"></i> Ver todos los servicios
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ───────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo" style="margin-bottom:18px">
+          <div class="logo-icon"><i class="fas fa-microchip"></i></div>
+          <span class="logo-text">NATA's <span>Repairs</span></span>
+        </div>
+        <p>Servicio técnico profesional en computadores. Diagnóstico, reparación y mantenimiento con experiencia y garantía.</p>
+        <div class="footer-contact">
+          <div class="fc-item"><i class="fab fa-whatsapp"></i><span>+57 322 710 7535</span></div>
+          <div class="fc-item"><i class="fab fa-tiktok"></i><span>@natas.repairs</span></div>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Servicios</h4>
+        <ul>
+          <li><a href="#services"><i class="fas fa-chevron-right"></i> Diagnóstico Laboratorio</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right"></i> Diagnóstico en Sitio</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right"></i> Instalación Office</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right"></i> Formateo / S.O.</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right"></i> Instalación de Partes</a></li>
+          <li><a href="#services"><i class="fas fa-chevron-right"></i> Limpieza General</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#about"><i class="fas fa-chevron-right"></i> Sobre Nosotros</a></li>
+          <li><a href="#products"><i class="fas fa-chevron-right"></i> Productos</a></li>
+          <li><a href="#social"><i class="fas fa-chevron-right"></i> Redes Sociales</a></li>
+          <li><a href="https://wa.me/573227107535" target="_blank"><i class="fas fa-chevron-right"></i> Contacto</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 NATA's Repairs — Ingeniería de Soluciones. Todos los derechos reservados.</p>
+      <div class="footer-socials">
+        <a href="https://www.tiktok.com/@natas.repairs?_r=1&_t=ZS-94yYq2u4EBG" target="_blank"><i class="fab fa-tiktok"></i></a>
+        <a href="https://wa.me/573227107535" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── SCRIPTS ──────────────────────────────── -->
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  // AOS init
+  AOS.init({ duration: 700, once: true, offset: 60, easing: 'ease-out-cubic' });
+
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+    // progress bar
+    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  });
+
+  // Mobile menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const closeMenu  = document.getElementById('closeMenu');
+  hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+  closeMenu.addEventListener('click',  () => mobileMenu.classList.remove('open'));
+  function closeNav() { mobileMenu.classList.remove('open'); }
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
